@@ -1,4 +1,4 @@
-Simple Shop | [![Build Status](https://travis-ci.org/kunicmarko20/Simple-Shop.svg?branch=master)](hhttps://travis-ci.org/kunicmarko20/Simple-Shop)
+Simple Shop | [![Build Status](https://travis-ci.org/kunicmarko20/Simple-Shop.svg?branch=master)](https://travis-ci.org/kunicmarko20/Simple-Shop)
 ========================
 
 This repository will be used for practicing Behavior Driven Development with Behat and Mink,
