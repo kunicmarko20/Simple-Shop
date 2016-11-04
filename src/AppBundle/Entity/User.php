@@ -47,7 +47,10 @@ class User implements UserInterface
     /**
      * A non-persisted field that's used to create the encoded password.
      * @Assert\NotBlank(groups={"Registration"})
-     *
+     * @Assert\Length(
+     *      min = 6,
+     *      minMessage = "Your password must be at least {{ limit }} characters long.",
+     * )
      * @var string
      */
     private $plainPassword;
@@ -56,6 +59,7 @@ class User implements UserInterface
      * @ORM\Column(type="json_array")
      */
     private $roles = [];
+    
 
     // needed by the security system
     public function getUsername()
@@ -124,4 +128,14 @@ class User implements UserInterface
         $this->plainPassword = $plainPassword;
         $this->password = null;
     }
+    /**
+     * Get id
+     *
+     * @return integer
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
 }

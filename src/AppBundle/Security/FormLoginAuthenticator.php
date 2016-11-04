@@ -15,7 +15,7 @@ use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Guard\Authenticator\AbstractFormLoginAuthenticator;
-
+use Symfony\Component\Security\Core\Exception\CustomUserMessageAuthenticationException;
 class FormLoginAuthenticator extends AbstractFormLoginAuthenticator
 {
     private $formFactory;
@@ -52,7 +52,13 @@ class FormLoginAuthenticator extends AbstractFormLoginAuthenticator
         $username = $credentials['_username'];
         $userRepo = $this->em
             ->getRepository('AppBundle:User');
-        return $userRepo->findByUsernameOrEmail($username);
+        $user = $userRepo->findByUsernameOrEmail($username);
+        if(!$user){
+            throw new CustomUserMessageAuthenticationException(
+                'Username or Email cound not be found.'
+            );
+        }
+        return $user;
     }
     public function checkCredentials($credentials, UserInterface $user)
     {
@@ -68,7 +74,7 @@ class FormLoginAuthenticator extends AbstractFormLoginAuthenticator
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception) {
         $request->getSession()->set(Security::AUTHENTICATION_ERROR,$exception);
         
-        $url = $this->router->generate('login');
+        $url = $this->router->generate('security_login');
         
         return new RedirectResponse($url);
     }
@@ -85,7 +91,7 @@ class FormLoginAuthenticator extends AbstractFormLoginAuthenticator
     }
 
     protected function getLoginUrl() {
-        $url = $this->router->generate('login');
+        $url = $this->router->generate('security_login');
         
         return new RedirectResponse($url);
     }
