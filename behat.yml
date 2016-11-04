@@ -1,6 +1,8 @@
 default:
     extensions:
         Behat\MinkExtension:
-            base_url: http://shop.dev/app_test.php/
+            base_url: 'http://localhost:8000/app_test.php/'
+            browser_name: firefox
             goutte: ~
+            selenium2: ~
         Behat\Symfony2Extension: ~
