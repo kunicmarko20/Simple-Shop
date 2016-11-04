@@ -23,8 +23,8 @@ before_script:
     - "DISPLAY=:10 xvfb-run java -jar selenium-server-standalone-2.45.0.jar &"
     - sleep 5
 script:
-    - bin/console doctrine:schema:update --force --env=test
     - bin/console --no-interaction cache:clear --env=test
     - bin/console --no-interaction cache:warmup --env=test
+    - bin/console doctrine:schema:update --force --env=test
     - chmod -R 777 var/cache var/logs
     - vendor/bin/behat
