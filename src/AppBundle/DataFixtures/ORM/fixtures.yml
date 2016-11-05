@@ -1,6 +1,6 @@
 AppBundle\Entity\User:
-    user_{1..10}:
-        email: testing+<current()>@gmail.com
-        username: testing+<current()>
-        PlainPassword: symfony3
+    user_{1..5}:
+        email: admin<current()>@admin.com
+        username: admin<current()>
+        PlainPassword: admin<current()>
         roles: ['ROLE_ADMIN']

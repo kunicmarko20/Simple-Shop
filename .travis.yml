@@ -16,7 +16,11 @@ script:
     - bin/console --no-interaction cache:clear --env=test
     - bin/console --no-interaction cache:warmup --env=test
     - bin/console doctrine:schema:update --force --env=test
+    - bin/console --no-interaction doctrine:fixtures:load --env=test 
     - chmod -R 777 var/cache var/logs
     - bin/console server:start
     - vendor/bin/behat
     - bin/console server:stop
+notifications:
+  email:
+    on_failure: always

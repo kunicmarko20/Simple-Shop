@@ -6,6 +6,8 @@ use Behat\Gherkin\Node\TableNode;
 use Behat\MinkExtension\Context\MinkContext;
 use AppBundle\Entity\User;
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
+use Symfony\Bridge\Doctrine\DataFixtures\ContainerAwareLoader;
+use Doctrine\Common\DataFixtures\Executor\ORMExecutor;
 /**
  * Defines application features from the specific context.
  */
@@ -23,28 +25,23 @@ class FeatureContext extends MinkContext implements Context
     {
     }
     /**
-     * @BeforeScenario
+     * @BeforeScenario @fixtures
      */
     public function clearData()
     {
         $purger = new ORMPurger($this->getContainer()->get('doctrine')->getManager());
         $purger->purge();
     }
-    /**
-     * @Given there is an admin user :username with password :password and email :email
+    
+     /**
+     * @BeforeScenario @fixtures
      */
-    public function thereIsAnAdminUserWithPasswordAndEmail($username, $password, $email)
+    public function loadFixtures()
     {
-        $user = new User();
-        $user->setUsername($username);
-        $user->setEmail($email);
-        $user->setPlainPassword($password);
-        $user->setRoles(['ROLE_ADMIN']);
-        $em = $this->getEntityManager();
-        $em->persist($user);
-        $em->flush();
-
-        return $user;
+        $loader = new ContainerAwareLoader($this->getContainer());
+        $loader->loadFromDirectory(__DIR__.'/../../src/AppBundle/DataFixtures');
+        $executor = new ORMExecutor($this->getEntityManager());
+        $executor->execute($loader->getFixtures(), true);
     }
     /**
      * @return \Doctrine\ORM\EntityManager

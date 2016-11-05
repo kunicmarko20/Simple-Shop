@@ -4,12 +4,11 @@ Feature: Register
     I need to be able to create personal account
 
     Background:
-        Given there is an admin user "admin_test" with password "admin_test" and email "admin.test@admin.com"
-        And I am on "/register"
+        Given I am on "/register"
 
     Scenario: Register : Unique Fields Fail
-        Given I fill in "Username" with "admin_test"
-        And I fill in "Email" with "admin.test@admin.com"
+        Given I fill in "Username" with "admin1"
+        And I fill in "Email" with "admin1@admin.com"
         And I press "Register"
         Then I should see "Username already exists."
         And I should see "Email in use."
