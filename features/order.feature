@@ -3,6 +3,7 @@ Feature: Order
     As a web user
     I should be able to add products to cart and checkout
 
+    @javascript
     Scenario: Adding to cart as user
         Given I am logged in as an admin
         And I am on "/"
@@ -11,6 +12,12 @@ Feature: Order
         Then I press "Add to Cart"
         And I should see "Product added!"
         But I should not see "$0"
+        Then I fill card field "card-name" with "testing"
+        And I fill card field "card-number" with "4242424242424242"
+        And I fill card field "card-expiration" with "10/20"
+        And I fill card field "card-cvc" with "123"
+        Then I press "Checkout"
+        And I wait for stripe to finish
 
     Scenario: Adding to cart as anonymous
         Given I am on "/"

@@ -95,7 +95,23 @@ class FeatureContext extends MinkContext implements Context
 
         assertCount(intval($number), $table->findAll('css', 'tbody tr'));
     }
-
+    
+    /**
+     * @Then /^I fill card field "([^"]*)" with "([^"]*)"$/
+     */
+    public function iFillCardFieldWith($field, $value)
+    {
+        $javascript = "document.getElementById('$field').value='$value'";
+        $this->getSession()->executeScript($javascript);
+    }
+    /**
+     * @When I wait for stripe to finish
+     */
+    public function iWaitForTheModalToLoad()
+    {
+        $this->getSession()->wait(
+            5000);
+    }
     /**
      * @Then I should see :number products
      */

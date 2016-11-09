@@ -4,5 +4,5 @@ default:
             base_url: 'http://localhost:8000/app_test.php/'
             goutte: ~
             selenium2:
-                capabilities: { "browser": "firefox" }
+                wd_host: "http://localhost:8643/wd/hub"
         Behat\Symfony2Extension: ~
