@@ -8,6 +8,9 @@ use AppBundle\Entity\User;
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 use Symfony\Bridge\Doctrine\DataFixtures\ContainerAwareLoader;
 use Doctrine\Common\DataFixtures\Executor\ORMExecutor;
+
+require_once __DIR__.'/../../vendor/phpunit/phpunit/src/Framework/Assert/Functions.php';
+
 /**
  * Defines application features from the specific context.
  */
@@ -49,5 +52,84 @@ class FeatureContext extends MinkContext implements Context
     private function getEntityManager()
     {
         return $this->getContainer()->get('doctrine.orm.entity_manager');
+    }
+    
+    /**
+     * @When I select random product
+     */
+    public function iSelectRandomProduct()
+    {
+        $button = $this->assertSession()
+            ->elementExists('css', '.shear-product > a');
+
+        $button->press();
+    }
+    
+    /**
+     * @return \Behat\Mink\Element\DocumentElement
+     */
+    private function getPage()
+    {
+        return $this->getSession()->getPage();
+    }
+    
+    /**
+     * @Given I am logged in as an admin
+     */
+    public function iAmLoggedInAsAnAdmin()
+    {
+
+        $this->visitPath('/login');
+        $this->getPage()->fillField('Username', 'admin1');
+        $this->getPage()->fillField('Password', 'admin1');
+        $this->getPage()->pressButton('Login');
+    }
+    
+    /**
+     * @Given there are :number products
+     */
+    public function thereAreProducts($number)
+    {
+        $table = $this->getPage()->find('css', 'table.table');
+        assertNotNull($table, 'Cannot find a table!');
+
+        assertCount(intval($number), $table->findAll('css', 'tbody tr'));
+    }
+
+    /**
+     * @Then I should see :number products
+     */
+    public function iShouldSeeProducts($number)
+    {
+        $this->thereAreProducts($number);
+    }
+
+    /**
+     * @Given I press :linkText in the :rowText row
+     */
+    public function iPressInTheRow($linkText, $rowText)
+    {
+        $this->findRowByText($rowText)->pressButton($linkText);
+    }
+
+    
+    /**
+     * @param $rowText
+     * @return \Behat\Mink\Element\NodeElement
+     */
+    private function findRowByText($rowText)
+    {
+        $row = $this->getPage()->find('css', sprintf('table tr:contains("%s")', $rowText));
+        assertNotNull($row, 'Cannot find a table row with this text!');
+
+        return $row;
+    }
+    
+    /**
+     * @When I click :linkName
+     */
+    public function iClick($linkName)
+    {
+        $this->getPage()->clickLink($linkName);
     }
 }

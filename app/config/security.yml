@@ -16,11 +16,18 @@ security:
 
         main:
             anonymous: ~
+            form_login:
+                login_path: security_login
+                check_path: security_login
             logout:
-                path: /logout
+                path: security_logout
             guard:
                 authenticators:
                     - app.form_login_authenticator
 
     access_control:
         - { path: ^/admin, roles: ROLE_ADMIN }
+        - { path: ^/login$, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/register, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/checkout, role: ROLE_USER }
+        - { path: ^/cart, role: ROLE_USER }

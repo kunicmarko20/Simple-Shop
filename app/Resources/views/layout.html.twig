@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title>{% block title %}Admin | Simple Shop{% endblock %}</title>
+            <link rel="stylesheet" href="{{ asset('vendor/bootstrap/css/bootstrap.min.css') }}">
+            <link rel="stylesheet" href="{{ asset('css/main.css') }}">
+            <link rel="stylesheet" href="{{ asset('vendor/fontawesome/css/font-awesome.min.css') }}">
+                        <link href="{{ asset('js/sweetalert/sweetalert.css') }}" rel="stylesheet">
+    {% block stylesheets %}
+
+    {% endblock %}
+</head>
+<body>
+
+
+<div class="container">
+    <div class="header clearfix">
+        <nav class="navigation-margin">
+            <ul class="nav nav-pills pull-right">
+                <li>
+                    <a href="{{ path('homepage') }}">Home</a>
+                </li>
+                <li><a href="{{ path('admin') }}">Admin</a></li>
+                {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+                    <li><a href="{{ path('security_logout') }}">Logout</a></li>
+                {% else %}
+                    <li><a href="{{ path('security_login') }}">Login</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+        <h1>The Simple Store</h1>
+    </div>
+    <hr>
+
+    <div class="row">
+        <div class="col-sm-12">
+            {% if app.session.flashBag.has('success') %}
+                <div class="alert alert-success">
+                    {% for msg in app.session.flashBag.get('success') %}
+                    {{ msg }}
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            {% block body %}{% endblock %}
+        </div>
+    </div>
+</div>
+
+<div id="modal-content-holder" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body clearfix"></div>
+        </div>
+    </div>
+</div>
+            <script           src="https://code.jquery.com/jquery-2.2.4.min.js"
+          integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
+          crossorigin="anonymous"></script>
+
+            <script src="{{ asset('js/sweetalert/sweetalert.min.js') }}"></script>
+            <script src="{{ asset('js/bootstrap.min.js') }}"></script>
+{% block javascripts %}
+{% endblock %}
+</body>
+</html>

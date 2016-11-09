@@ -9,14 +9,12 @@ before_script:
     - chmod -R 777 var/cache var/logs
     - sudo apt-get install xvfb
     - echo '' > ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini
-    - "wget http://selenium-release.storage.googleapis.com/2.45/selenium-server-standalone-2.45.0.jar"
-    - "DISPLAY=:10 xvfb-run java -jar selenium-server-standalone-2.45.0.jar &"
-    - sleep 5
+
 script:
     - bin/console --no-interaction cache:clear --env=test
     - bin/console --no-interaction cache:warmup --env=test
     - bin/console doctrine:schema:update --force --env=test
-    - bin/console --no-interaction doctrine:fixtures:load --env=test 
+    - bin/console --no-interaction doctrine:fixtures:load --env=test
     - chmod -R 777 var/cache var/logs
     - bin/console server:start
     - vendor/bin/behat

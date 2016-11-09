@@ -2,7 +2,7 @@ default:
     extensions:
         Behat\MinkExtension:
             base_url: 'http://localhost:8000/app_test.php/'
-            browser_name: firefox
             goutte: ~
-            selenium2: ~
+            selenium2:
+                capabilities: { "browser": "firefox" }
         Behat\Symfony2Extension: ~

@@ -4,3 +4,9 @@ AppBundle\Entity\User:
         username: admin<current()>
         PlainPassword: admin<current()>
         roles: ['ROLE_ADMIN']
+
+AppBundle\Entity\Product:
+    product{1..15}:
+        price: <numberBetween(9, 99)>
+        description: <realText(500, 5)>
+        name: Super Sheer <firstName()>

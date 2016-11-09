@@ -1,41 +1,77 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <meta charset="utf-8">
-        <title>{% block title %}Testing!{% endblock %}</title>
+        <meta charset="UTF-8" />
+        <title>{% block title %}Simple Shop{% endblock %}</title>
 
-        {% block stylesheets %}
             <link rel="stylesheet" href="{{ asset('vendor/bootstrap/css/bootstrap.min.css') }}">
             <link rel="stylesheet" href="{{ asset('css/styles.css') }}">
             <link rel="stylesheet" href="{{ asset('vendor/fontawesome/css/font-awesome.min.css') }}">
-        {% endblock %}
-        <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
+            <link href="{{ asset('js/sweetalert/sweetalert.css') }}" rel="stylesheet">
+            <link href='https://fonts.googleapis.com/css?family=Lobster+Two' rel='stylesheet' type='text/css'>
+        {% block stylesheets %}{% endblock %}
+        <link rel="icon" type="image/x-icon" href="{{ asset('favicon.png') }}" />
     </head>
     <body>
-        <header class="header">
-            <ul class="navi">
-                {% if is_granted('ROLE_USER') %}
-                    <li><a href="{{ path('security_logout') }}">Logout</a></li>
-                {% else %}
-                    <li><a href="{{ path('security_login') }}">Login</a></li>
-                {% endif %}
-            </ul>
-        </header>
+        {% for msg in app.session.flashBag.get('success') %}
+            <div class="sheep-flash alert alert-success">{{ msg }}</div>
+        {% endfor %}
 
-        <div class="main-content">
-            {% for msg in app.session.flashBag.get('success') %}
-                <div class="alert alert-success">
-                    {{ msg }}
+        {% for msg in app.session.flashBag.get('error') %}
+            <div class="sheep-flash alert alert-danger">{{ msg }}</div>
+        {% endfor %}
+
+        <nav class="navbar navbar-default navbar-fixed-top">
+            <div class="container">
+                <div class="navbar-header navbar-left">
+                    <a class="navbar-brand" href="{{ path('homepage') }}">
+                        Simple Shop
+                    </a>
                 </div>
-            {% endfor %}
+                <img class="ssc-logo center-block" src="{{ asset('img/logo.png') }}"/>
+                <div id="navbar" class="navbar-right">
+                    <ul class="nav navbar-nav">
+                        {% if is_granted('ROLE_ADMIN') %}
+                            <li>
+                                <a href="{{ path('admin') }}">Admin</a>
+                            </li>
+                        {% endif %}
+                        <li>
+                            <a href="{{ path('product_show_all') }}">Products</a>
+                        </li>
+                        <li>
+                            <a href="{{ path('pricing_show') }}">Pricing</a>
+                        </li>
+                        <li>
+                            <a href="{{ path('order_checkout') }}">
+                                <span class="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span> Checkout
+                            </a>
+                        </li>
+                        {% if is_granted('ROLE_USER') %}
+                            <li>
+                                <a href="{{ path('security_logout') }}">Logout</a>
+                            </li>
+                        {% else %}
+                            <li>
+                                <a href="{{ path('security_login') }}">Login</a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </div><!--/.nav-collapse -->
+            </div>
+        </nav>
 
-            {% block body %}{% endblock %}
-        </div>
+        {% block body %}{% endblock %}
 
 
-        {% block javascripts %}
-            <script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
-            <script src="{{ asset('js/main.js') }}"></script>
-        {% endblock %}
+
+
+            <script           src="https://code.jquery.com/jquery-2.2.4.min.js"
+          integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
+          crossorigin="anonymous"></script>
+
+            <script src="{{ asset('js/sweetalert/sweetalert.min.js') }}"></script>
+            <script src="{{ asset('js/bootstrap.min.js') }}"></script>
+                {% block javascripts %}{% endblock %}
     </body>
 </html>

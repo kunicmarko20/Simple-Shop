@@ -1,0 +1,10 @@
+{% extends 'layout.html.twig' %}
+
+{% block body %}
+    {{ form_start(form) }}
+        {{ form_row(form.name) }}
+        {{ form_row(form.price) }}
+        {{ form_row(form.description) }}
+        <button type="submit" class="btn btn-success">Add</button>
+    {{ form_end(form) }}
+{% endblock %}

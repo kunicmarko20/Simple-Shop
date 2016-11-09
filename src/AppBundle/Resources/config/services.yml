@@ -2,3 +2,6 @@ services:
     user.util:
         class: AppBundle\Util\UserUtil
         autowire: true
+    shopping_cart:
+        class: AppBundle\Service\ShoppingCart
+        autowire: true

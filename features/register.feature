@@ -28,6 +28,7 @@ Feature: Register
         And I press "Register"
         Then I should see "Your password must be at least 6 characters long."
 
+    @fixtures
     Scenario: Register : Valid
         Given I fill in "Username" with "admin_test2"
         And I fill in "Email" with "admin.test2@admin.com"

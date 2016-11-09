@@ -1,7 +1,8 @@
 {% extends 'base.html.twig' %}
-
+{% block title %}Login | {{ parent() }} {% endblock %}
 {% block body %}
-<div class="container">
+
+<div class="container"  style="margin-top: 50px;">
     <div class="row">
         <div class="col-xs-12">
             <h1>Login!</h1>
@@ -17,7 +18,7 @@
                 {{ form_row(form._password) }}
                 <button type="submit" class="btn btn-success">Login <span class="fa fa-lock"></span></button>
                 &nbsp;
-{#                <a href="{{ path('user_register') }}">I already have an account</a>#}
+                <a href="{{ path('user_register') }}">I don't have an account</a>
             {{ form_end(form) }}
         </div>
     </div>
