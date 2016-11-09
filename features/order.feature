@@ -10,7 +10,7 @@ Feature: Order
         And I select random product
         Then I press "Add to Cart"
         And I should see "Product added!"
-        And I should not see "$0"
+        But I should not see "$0"
 
     Scenario: Adding to cart as anonymous
         Given I am on "/"
@@ -18,3 +18,8 @@ Feature: Order
         And I select random product
         Then I press "Add to Cart"
         And I should see "Login!"
+        Then I fill in "Username" with "admin5"
+        And I fill in "Password" with "admin5"
+        And I press "Login"
+        Then I should be on "/checkout"
+        And I should not see "$0"

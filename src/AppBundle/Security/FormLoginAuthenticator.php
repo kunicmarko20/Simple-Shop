@@ -16,6 +16,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Guard\Authenticator\AbstractFormLoginAuthenticator;
 use Symfony\Component\Security\Core\Exception\CustomUserMessageAuthenticationException;
+
 class FormLoginAuthenticator extends AbstractFormLoginAuthenticator
 {
     private $formFactory;
@@ -36,6 +37,7 @@ class FormLoginAuthenticator extends AbstractFormLoginAuthenticator
         if ($request->getPathInfo() != '/login' || $request->getMethod() != 'POST') {
             return;
         }
+        dump($request->headers->get('referer'));
         $form = $this->formFactory->create(LoginForm::class);
         $form->handleRequest($request);
 
@@ -79,10 +81,8 @@ class FormLoginAuthenticator extends AbstractFormLoginAuthenticator
         return new RedirectResponse($url);
     }
 
-    public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey) {
-        $url = $this->router->generate('homepage');
-        
-        return new RedirectResponse($url);
+    public function getDefaultSuccessRedirectUrl() {
+        return $this->router->generate('homepage');
     }
 
 

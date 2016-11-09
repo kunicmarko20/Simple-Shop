@@ -17,8 +17,11 @@ class OrderController extends Controller
     {
         $this->get('shopping_cart')
             ->addProduct($product);
+        
+        if ($this->get('security.authorization_checker')->isGranted('ROLE_ADMIN')) {
+            $this->addFlash('success', 'Product added!');
+        }
 
-        $this->addFlash('success', 'Product added!');
 
         return $this->redirectToRoute('order_checkout');
     }
