@@ -104,14 +104,16 @@ class FeatureContext extends MinkContext implements Context
         $javascript = "document.getElementById('$field').value='$value'";
         $this->getSession()->executeScript($javascript);
     }
+
     /**
-     * @When I wait for stripe to finish
+     * @Then I wait :number ms for javascript to process
      */
-    public function iWaitForTheModalToLoad()
+    public function iWaitMsForJavascriptToProcess($number)
     {
         $this->getSession()->wait(
-            5000);
+            $number);
     }
+
     /**
      * @Then I should see :number products
      */

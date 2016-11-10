@@ -17,7 +17,7 @@ Feature: Order
         And I fill card field "card-expiration" with "10/20"
         And I fill card field "card-cvc" with "123"
         Then I press "Checkout"
-        And I wait for stripe to finish
+        And I wait "10000" ms for javascript to process
 
     Scenario: Adding to cart as anonymous
         Given I am on "/"

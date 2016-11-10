@@ -9,7 +9,8 @@ before_script:
     - chmod -R 777 var/cache var/logs
     - sudo apt-get install xvfb
     - echo '' > ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini
-    - phantomjs --webdriver=8643
+    - phantomjs --webdriver=8643 &
+    - sleep 5
 
 script:
     - bin/console --no-interaction cache:clear --env=test
