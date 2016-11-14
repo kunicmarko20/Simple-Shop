@@ -60,7 +60,18 @@ class User implements UserInterface
      */
     private $roles = [];
     
-
+    /**
+      * @ORM\Column(type="string", unique=true, nullable=true)
+      */
+     private $stripeCustomerId;
+  
+     function getStripeCustomerId() {
+         return $this->stripeCustomerId;
+     }
+ 
+     function setStripeCustomerId($stripeCustomerId) {
+         $this->stripeCustomerId = $stripeCustomerId;
+     }
     // needed by the security system
     public function getUsername()
     {

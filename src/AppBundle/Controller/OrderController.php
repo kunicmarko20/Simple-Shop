@@ -7,7 +7,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
-use Stripe;
+use \Stripe;
 
 class OrderController extends Controller
 {
@@ -35,26 +35,50 @@ class OrderController extends Controller
     public function checkoutAction(Request $request)
     {
         $products = $this->get('shopping_cart')->getProducts();
+        $error = false;
+        
         if($request->isMethod('POST')){
             $token = $request->get('stripeToken');
-            Stripe\Stripe::setApiKey($this->getParameter('stripe_secret_key'));
+            
+            try {
+                $this->chargeCustomer($token);
+            } catch (Stripe\Error\Card $e) {
+                $error = "There was a problem charging your card: ".$e->getMessage();
+            }
+            if(!$error){
+                $this->get('shopping_cart')->emptyCart();
+                $this->addFlash('success', 'Order Complete'); 
+                return $this->redirectToRoute('homepage');
+            }
 
-            Stripe\Charge::create(array(
-              "amount" => $this->get('shopping_cart')->getTotal() * 100,
-              "currency" => "usd",
-              "source" => $token, // obtained with Stripe.js
-              "description" => "Charge for emma.anderson@example.com"
-            ));
-            
-            $this->get('shopping_cart')->emptyCart();
-            $this->addFlash('success', 'Order Complete');
-            
-            return $this->redirectToRoute('homepage');
         }
+        
         return $this->render('order/checkout.html.twig', array(
             'products' => $products,
-            'cart' => $this->get('shopping_cart')
+            'cart' => $this->get('shopping_cart'),
+            'error' => $error
         ));
 
+    }
+    
+    public function chargeCustomer($token){
+        
+             $user = $this->getUser();
+             $stripeClient = $this->get('stripe');
+             
+             if(!$user->getStripeCustomerId()){
+                 $stripeClient->createCustomer($token);
+             } else {
+                 $stripeClient->updateCustomerCard($token);
+             }
+             
+             foreach($this->get('shopping_cart')->getProducts() as $product){
+                    $stripeClient->createInvoiceItem(
+                         $product->getPrice()*100,
+                         $product->getName()
+                    );
+             }
+             
+             $stripeClient->createInvoice(true);
     }
 }
