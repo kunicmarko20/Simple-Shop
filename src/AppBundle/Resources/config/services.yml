@@ -5,7 +5,7 @@ services:
     shopping_cart:
         class: AppBundle\Service\ShoppingCart
         autowire: true
-    stripe:
-        class: AppBundle\Service\Stripe
+    stripe.client:
+        class: AppBundle\Service\StripeClient
         autowire: true
         arguments: ['%stripe_secret_key%',"@=service('security.token_storage').getToken().getUser()"]

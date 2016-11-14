@@ -28,7 +28,14 @@ class OrderController extends Controller
 
         return $this->redirectToRoute('order_checkout');
     }
-
+    /**
+     * @Route("/cart/subscription/{planId}", name="order_add_subscription_to_cart")
+     */
+    public function addSubscriptionToCartAction($planId)
+    {
+        // todo - add the subscription plan to the cart!
+    }
+    
     /**
      * @Route("/checkout", name="order_checkout")
      */
@@ -64,7 +71,7 @@ class OrderController extends Controller
     public function chargeCustomer($token){
         
              $user = $this->getUser();
-             $stripeClient = $this->get('stripe');
+             $stripeClient = $this->get('stripe.client');
              
              if(!$user->getStripeCustomerId()){
                  $stripeClient->createCustomer($token);

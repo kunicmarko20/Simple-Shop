@@ -1,7 +1,13 @@
 language: php
 php:
-  - '5.6'
+#  - '5.6' for now test travis only on 7.0 because there is problem with phantomJS on 5.6
   - '7.0'
+
+before_install:
+  - wget https://assets.membergetmember.co/software/phantomjs-2.1.1-linux-x86_64.tar.bz2
+  - tar -xjf phantomjs-2.1.1-linux-x86_64.tar.bz2
+  - sudo rm -rf /usr/local/phantomjs/bin/phantomjs
+  - sudo mv phantomjs-2.1.1-linux-x86_64/bin/phantomjs /usr/local/phantomjs/bin/phantomjs
 
 before_script:
     - sudo apt-get update

@@ -44,7 +44,7 @@ Feature: Order
         Then I should see "There was a problem charging your card: Your card has expired."
 
     @javascript
-    Scenario: Proccessing card errror
+    Scenario: Proccessing card error
         Given I fill card field "card-number" with "4000000000000119"
         Then I press "Checkout"
         And I wait "10000" ms for javascript to process

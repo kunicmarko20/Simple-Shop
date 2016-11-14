@@ -13,7 +13,7 @@ use Doctrine\ORM\EntityManager;
 use Stripe;
 
 
-class Stripe {
+class StripeClient {
     
     private $em;
     private $user;

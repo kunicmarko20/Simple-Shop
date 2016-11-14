@@ -31,11 +31,11 @@ class ProductController extends Controller
     }
 
     /**
-     * @Route("/pricing", name="pricing_show")
+     * @Route("/subscription", name="subscription_show")
      */
-    public function pricingAction()
+    public function subscriptionAction()
     {
-        return $this->render('product/pricing.html.twig', array(
+        return $this->render('product/subscription.html.twig', array(
         ));
     }
 }
