@@ -2,10 +2,17 @@ services:
     user.util:
         class: AppBundle\Util\UserUtil
         autowire: true
+
     shopping_cart:
         class: AppBundle\Service\ShoppingCart
         autowire: true
+
     stripe.client:
-        class: AppBundle\Service\StripeClient
+        class: AppBundle\Stripe\StripeClient
         autowire: true
         arguments: ['%stripe_secret_key%',"@=service('security.token_storage').getToken().getUser()"]
+
+    subscription_helper:
+        class: AppBundle\Stripe\SubscriptionHelper
+        autowire: true
+        arguments: ["@=service('security.token_storage').getToken().getUser()"]

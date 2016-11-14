@@ -30,3 +30,4 @@ security:
         - { path: ^/login$, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/register, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/checkout, role: ROLE_USER }
+        - { path: ^/profile, role: ROLE_USER }

@@ -82,7 +82,7 @@ class FormLoginAuthenticator extends AbstractFormLoginAuthenticator
     }
 
     public function getDefaultSuccessRedirectUrl() {
-        return $this->router->generate('homepage');
+        return $this->router->generate('profile_account');
     }
 
 

@@ -35,7 +35,16 @@ class FeatureContext extends MinkContext implements Context
         $purger = new ORMPurger($this->getContainer()->get('doctrine')->getManager());
         $purger->purge();
     }
-    
+    /**
+     * Saving a screenshot
+     *
+     * @When I save a screenshot to :filename
+     */
+    public function iSaveAScreenshotIn($filename)
+    {
+        sleep(1);
+        $this->saveScreenshot($filename, __DIR__.'/../..');
+    }
      /**
      * @BeforeScenario @fixtures
      */

@@ -33,7 +33,16 @@ class OrderController extends Controller
      */
     public function addSubscriptionToCartAction($planId)
     {
-        // todo - add the subscription plan to the cart!
+        $subscriptionHelper = $this->get('subscription_helper');
+        $plan = $subscriptionHelper->findPlan($planId);
+        
+        if(!$plan){
+            throw $this->createNotFoundException('Plan not found.');
+        }
+        
+        $this->get('shopping_cart')->addSubscription($planId);
+        
+        return $this->redirectToRoute('order_checkout');
     }
     
     /**
@@ -70,22 +79,36 @@ class OrderController extends Controller
     
     public function chargeCustomer($token){
         
-             $user = $this->getUser();
-             $stripeClient = $this->get('stripe.client');
-             
-             if(!$user->getStripeCustomerId()){
-                 $stripeClient->createCustomer($token);
-             } else {
-                 $stripeClient->updateCustomerCard($token);
-             }
-             
-             foreach($this->get('shopping_cart')->getProducts() as $product){
-                    $stripeClient->createInvoiceItem(
-                         $product->getPrice()*100,
-                         $product->getName()
-                    );
-             }
-             
-             $stripeClient->createInvoice(true);
+        $user = $this->getUser();
+        $stripeClient = $this->get('stripe.client');
+        $cart = $this->get('shopping_cart');
+        $helper = $this->get('subscription_helper');
+        if(!$user->getStripeCustomerId()){
+            $stripeCustomer = $stripeClient->createCustomer($token);
+        } else {
+            $stripeCustomer = $stripeClient->updateCustomerCard($token);
+        }
+
+        $helper->updateCardDetails($stripeCustomer);
+        
+        foreach($cart->getProducts() as $product){
+               $stripeClient->createInvoiceItem(
+                    $product->getPrice()*100,
+                    $product->getName()
+               );
+        }
+
+       if($cart->getSubscriptionPlan()){
+            $subscription = $stripeClient->createSubscription(
+              $cart->getSubscriptionPlan()
+            );
+
+            $helper->addSubscriptionToUser(
+                 $subscription
+              );
+       }else {
+          $stripeClient->createInvoice(true);               
+       }
+       
     }
 }

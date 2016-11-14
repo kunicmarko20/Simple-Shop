@@ -3,22 +3,28 @@
 namespace AppBundle\Service;
 
 use AppBundle\Entity\Product;
+use AppBundle\Stripe\SubscriptionHelper;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\HttpFoundation\Session\Session;
 
 class ShoppingCart
 {
     const CART_PRODUCTS_KEY = '_shopping_cart.products';
+    const CART_PLAN_KEY = '_shopping_cart.subscription_plan';
+    const CART_COUPON_CODE_KEY = '_shopping_cart.coupon_code';
+    const CART_COUPON_VALUE_KEY = '_shopping_cart.coupon_value';
 
     private $session;
     private $em;
+    private $subscriptionHelper;
 
     private $products;
 
-    public function __construct(Session $session, EntityManager $em)
+    public function __construct(Session $session, EntityManager $em, SubscriptionHelper $subscriptionHelper)
     {
         $this->session = $session;
         $this->em = $em;
+        $this->subscriptionHelper = $subscriptionHelper;
     }
 
     public function addProduct(Product $product)
@@ -30,6 +36,14 @@ class ShoppingCart
         }
 
         $this->updateProducts($products);
+    }
+
+    public function addSubscription($planId)
+    {
+        $this->session->set(
+            self::CART_PLAN_KEY,
+            $planId
+        );
     }
 
     /**
@@ -56,6 +70,17 @@ class ShoppingCart
         return $this->products;
     }
 
+    /**
+     * @return \AppBundle\Subscription\SubscriptionPlan|null
+     */
+    public function getSubscriptionPlan()
+    {
+        $planId = $this->session->get(self::CART_PLAN_KEY);
+
+        return $this->subscriptionHelper
+            ->findPlan($planId);
+    }
+
     public function getTotal()
     {
         $total = 0;
@@ -63,12 +88,49 @@ class ShoppingCart
             $total += $product->getPrice();
         }
 
+        if ($this->getSubscriptionPlan()) {
+            $price = $this->getSubscriptionPlan()
+                ->getPrice();
+
+            $total += $price;
+        }
+
         return $total;
+    }
+
+    public function getTotalWithDiscount()
+    {
+        return max($this->getTotal() - $this->getCouponCodeValue(), 0);
+    }
+
+    public function setCouponCode($code, $value)
+    {
+        $this->session->set(
+            self::CART_COUPON_CODE_KEY,
+            $code
+        );
+
+        $this->session->set(
+            self::CART_COUPON_VALUE_KEY,
+            $value
+        );
+    }
+
+    public function getCouponCode()
+    {
+        return $this->session->get(self::CART_COUPON_CODE_KEY);
+    }
+
+    public function getCouponCodeValue()
+    {
+        return $this->session->get(self::CART_COUPON_VALUE_KEY);
     }
 
     public function emptyCart()
     {
         $this->updateProducts([]);
+        $this->updatePlanId(null);
+        $this->setCouponCode(null, null);
     }
 
     /**
@@ -83,5 +145,10 @@ class ShoppingCart
         }, $products);
 
         $this->session->set(self::CART_PRODUCTS_KEY, $ids);
+    }
+
+    private function updatePlanId($planId)
+    {
+        $this->session->set(self::CART_PLAN_KEY, $planId);
     }
 }

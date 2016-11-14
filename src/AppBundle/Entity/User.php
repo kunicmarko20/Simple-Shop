@@ -64,7 +64,23 @@ class User implements UserInterface
       * @ORM\Column(type="string", unique=true, nullable=true)
       */
      private $stripeCustomerId;
-  
+    
+     
+    /**
+     * @ORM\Column(type="string", nullable=true)
+     */
+    private $cardBrand;
+
+    /**
+     * @ORM\Column(type="string", length=4, nullable=true)
+     */
+    private $cardLast4;
+
+    /**
+     * @ORM\OneToOne(targetEntity="Subscription", mappedBy="user")
+     */
+    private $subscription;
+    
      function getStripeCustomerId() {
          return $this->stripeCustomerId;
      }
@@ -149,4 +165,84 @@ class User implements UserInterface
         return $this->id;
     }
 
+
+    /**
+     * Set cardBrand
+     *
+     * @param string $cardBrand
+     *
+     * @return User
+     */
+    public function setCardBrand($cardBrand)
+    {
+        $this->cardBrand = $cardBrand;
+
+        return $this;
+    }
+
+    /**
+     * Get cardBrand
+     *
+     * @return string
+     */
+    public function getCardBrand()
+    {
+        return $this->cardBrand;
+    }
+
+    /**
+     * Set cardLast4
+     *
+     * @param string $cardLast4
+     *
+     * @return User
+     */
+    public function setCardLast4($cardLast4)
+    {
+        $this->cardLast4 = $cardLast4;
+
+        return $this;
+    }
+
+    /**
+     * Get cardLast4
+     *
+     * @return string
+     */
+    public function getCardLast4()
+    {
+        return $this->cardLast4;
+    }
+
+    /**
+     * Set subscription
+     *
+     * @param \AppBundle\Entity\Subscription $subscription
+     *
+     * @return User
+     */
+    public function setSubscription(\AppBundle\Entity\Subscription $subscription = null)
+    {
+        $this->subscription = $subscription;
+
+        return $this;
+    }
+
+    /**
+     * Get subscription
+     *
+     * @return \AppBundle\Entity\Subscription
+     */
+    public function getSubscription()
+    {
+        return $this->subscription;
+    }
+    
+    public function hasActiveSubscription(){
+        return $this->getSubscription() && $this->getSubscription()->isActive();
+    }
+    
+    public function hasActiveNonCancelledSubscription(){
+        return $this->hasActiveSubscription() && !$this->subscription->isCancelled();
+    }
 }

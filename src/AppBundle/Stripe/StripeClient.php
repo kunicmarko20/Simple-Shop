@@ -6,7 +6,7 @@
  * and open the template in the editor.
  */
 
-namespace AppBundle\Service;
+namespace AppBundle\Stripe;
 
 use AppBundle\Entity\User;
 use Doctrine\ORM\EntityManager;
@@ -34,7 +34,14 @@ class StripeClient {
                 
                 return $customer;
     }
-    
+    public function createSubscription($plan){
+        $subscription = Stripe\Subscription::create(array(
+            "customer" => $this->user->getStripeCustomerId(),
+            "plan" => $plan->getPlanId()
+          ));
+        
+        return $subscription;
+    }
     public function updateCustomerCard($token){
                 $customer = Stripe\Customer::retrieve($this->user->getStripeCustomerId());
                 $customer->source = $token;
@@ -63,5 +70,39 @@ class StripeClient {
             
             return $invoice;
 
+    }
+    
+    public function cancelSubscription(){
+        $subscription = \Stripe\Subscription::retrieve(
+                $this->user->getSubscription()->getStripeSubscriptionId()
+        );
+        
+        $cancelAtPeriodEnd = true;
+        $currentPeriodEnd = new \DateTime('@'.$subscription->current_period_end);
+        
+        if($subscription->status == 'past_due'){
+            $cancelAtPeriodEnd = false;
+        }elseif ($currentPeriodEnd < new \DateTime('+5 hours')){ //timezone of server needs to be UTC if we want to workaround 1 hour Stripe bug, or we can set time to more than 1 hour
+            $cancelAtPeriodEnd = false;
+        }
+        
+        $subscription->cancel(array('at_period_end' => $cancelAtPeriodEnd));
+        
+        return $subscription;
+    }
+    
+    public function reactivateSubscription(){
+        
+        if(!$this->user->hasActiveSubscription()){
+            throw new \LogicException('Subscription can only be reactivated if billing period did not end.');
+        }
+        
+        $subscription = \Stripe\Subscription::retrieve(
+                $this->user->getSubscription()->getStripeSubscriptionId()
+        );
+        $subscription->plan =  $this->user->getSubscription()->getStripePlanId();
+        $subscription->save();
+        
+        return $subscription;
     }
 }
