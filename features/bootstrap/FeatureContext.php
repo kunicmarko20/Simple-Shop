@@ -35,6 +35,7 @@ class FeatureContext extends MinkContext implements Context
         $purger = new ORMPurger($this->getContainer()->get('doctrine')->getManager());
         $purger->purge();
     }
+    
     /**
      * Saving a screenshot
      *

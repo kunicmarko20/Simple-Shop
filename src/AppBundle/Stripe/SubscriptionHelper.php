@@ -67,4 +67,11 @@ class SubscriptionHelper
         $this->em->persist($this->user);
         $this->em->flush();
     }
+    
+    public function fullyCancelSubscription(Subscription $subscription)
+    {
+        $subscription->cancel();
+        $this->em->persist($subscription);
+        $this->em->flush($subscription);
+    }
 }

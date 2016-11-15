@@ -1,6 +1,6 @@
 language: php
 php:
-#  - '5.6' for now test travis only on 7.0 because there is problem with phantomJS on 5.6
+#  - '5.6'
   - '7.0'
 
 before_install:
@@ -15,7 +15,9 @@ before_script:
     - chmod -R 777 var/cache var/logs
     - sudo apt-get install xvfb
     - echo '' > ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini
-    - phantomjs --webdriver=8643 &
+    - "sh -e /etc/init.d/xvfb start"
+    - "export DISPLAY=:99.0"
+    - "phantomjs --webdriver=8643 > /dev/null &"
     - sleep 5
 
 script:

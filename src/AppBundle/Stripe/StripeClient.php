@@ -97,12 +97,21 @@ class StripeClient {
             throw new \LogicException('Subscription can only be reactivated if billing period did not end.');
         }
         
-        $subscription = \Stripe\Subscription::retrieve(
+        $subscription = Stripe\Subscription::retrieve(
                 $this->user->getSubscription()->getStripeSubscriptionId()
         );
         $subscription->plan =  $this->user->getSubscription()->getStripePlanId();
         $subscription->save();
         
         return $subscription;
+    }
+    
+    /**
+     * @param $eventId
+     * @return \Stripe\Event
+     */
+    public function findEvent($eventId)
+    {
+        return Stripe\Event::retrieve($eventId);
     }
 }
