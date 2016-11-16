@@ -10,9 +10,8 @@ services:
     stripe.client:
         class: AppBundle\Stripe\StripeClient
         autowire: true
-        arguments: ['%stripe_secret_key%',"@=service('security.token_storage').getToken().getUser()"]
+        arguments: ['%stripe_secret_key%']
 
     subscription_helper:
         class: AppBundle\Stripe\SubscriptionHelper
         autowire: true
-        arguments: ["@=service('security.token_storage').getToken().getUser()"]

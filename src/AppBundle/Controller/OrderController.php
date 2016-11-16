@@ -84,30 +84,33 @@ class OrderController extends Controller
         $cart = $this->get('shopping_cart');
         $helper = $this->get('subscription_helper');
         if(!$user->getStripeCustomerId()){
-            $stripeCustomer = $stripeClient->createCustomer($token);
+            $stripeCustomer = $stripeClient->createCustomer($user, $token);
         } else {
-            $stripeCustomer = $stripeClient->updateCustomerCard($token);
+            $stripeCustomer = $stripeClient->updateCustomerCard($user, $token);
         }
 
-        $helper->updateCardDetails($stripeCustomer);
+        $helper->updateCardDetails($user, $stripeCustomer);
         
         foreach($cart->getProducts() as $product){
                $stripeClient->createInvoiceItem(
                     $product->getPrice()*100,
+                    $user,
                     $product->getName()
                );
         }
 
        if($cart->getSubscriptionPlan()){
             $subscription = $stripeClient->createSubscription(
+              $user,
               $cart->getSubscriptionPlan()
             );
 
             $helper->addSubscriptionToUser(
-                 $subscription
-              );
+                $subscription,
+                $user
+            );
        }else {
-          $stripeClient->createInvoice(true);               
+          $stripeClient->createInvoice($user, true);               
        }
        
     }

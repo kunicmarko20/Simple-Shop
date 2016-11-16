@@ -16,13 +16,13 @@ Feature: Card
     Scenario: Update Card
         Given I fill card field "card-number" with "4242424242424242"
         Then I press "Update Card"
-        And I wait "10000" ms for javascript to process
+        And I wait "5000" ms for javascript to process
         Then I should see "Card updated!"
 
     @javascript
     Scenario: Card update declined
         Given I fill card field "card-number" with "4000000000000002"
         Then I press "Update Card"
-        And I wait "10000" ms for javascript to process
+        And I wait "5000" ms for javascript to process
         Then I should see "There was a problem charging your card: Your card was declined."
 
