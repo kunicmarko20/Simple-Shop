@@ -77,7 +77,11 @@ class OrderController extends Controller
 
     }
     
-    public function chargeCustomer($token){
+    public function chargeCustomer($token)
+    {
+        if (!$token && $this->get('shopping_cart')->getTotalWithDiscount() > 0) {
+            throw new \Exception('Somehow the order is non-free, but we have no token!?');
+        }
         
         $user = $this->getUser();
         $stripeClient = $this->get('stripe.client');
@@ -86,10 +90,20 @@ class OrderController extends Controller
         if(!$user->getStripeCustomerId()){
             $stripeCustomer = $stripeClient->createCustomer($user, $token);
         } else {
-            $stripeCustomer = $stripeClient->updateCustomerCard($user, $token);
+            // don't need to update it if the order is free
+            if ($token) {
+                $stripeCustomer = $stripeClient->updateCustomerCard($user, $token);
+            } else {
+                $stripeCustomer = $stripeClient->findCustomer($user);
+            }
         }
 
         $helper->updateCardDetails($user, $stripeCustomer);
+
+        if ($cart->getCouponCodeValue()) {
+            $stripeCustomer->coupon = $cart->getCouponCode();
+            $stripeCustomer->save();
+        }
         
         foreach($cart->getProducts() as $product){
                $stripeClient->createInvoiceItem(
@@ -113,5 +127,39 @@ class OrderController extends Controller
           $stripeClient->createInvoice($user, true);               
        }
        
+    }
+    
+    /**
+     * @Route("/checkout/coupon", name="order_add_coupon")
+     * @Method("POST")
+     */
+    public function addCouponAction(Request $request)
+    {
+        $code = $request->request->get('code');
+        if (!$code) {
+            $this->addFlash('error', 'Missing coupon code!');
+            return $this->redirectToRoute('order_checkout');
+        }
+        
+        try {
+            $stripeCoupon = $this->get('stripe.client')
+                ->findCoupon($code);
+        } catch (\Stripe\Error\InvalidRequest $e) {
+            $this->addFlash('error', 'Invalid coupon code!');
+            return $this->redirectToRoute('order_checkout');
+        }
+        
+        if (!$stripeCoupon->valid) {
+            $this->addFlash('error', 'Coupon expired');
+            return $this->redirectToRoute('order_checkout');
+        }
+        
+        $this->get('shopping_cart')
+            ->setCouponCode($code, $stripeCoupon->amount_off / 100);
+        
+        $this->addFlash('success', 'Coupon applied!');
+        
+        return $this->redirectToRoute('order_checkout');
+        
     }
 }

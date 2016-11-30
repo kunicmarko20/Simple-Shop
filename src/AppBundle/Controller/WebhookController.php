@@ -80,7 +80,13 @@ class WebhookController extends Controller
                     $subscription = $this->findSubscription($stripeSubscriptionId);
                     if ($stripeEvent->data->object->attempt_count == 1) {
                         $user = $subscription->getUser();
+                        $stripeCustomer = $this->get('stripe_client')
+                            ->findCustomer($user->getStripeCustomerId());
+                        
+                        $hasCardOnFile = count($stripeCustomer->sources->data) > 0;
+                        
                         // todo - send the user an email about the problem
+                        // use hasCardOnFile to customize this
                     }
                 }
             break;

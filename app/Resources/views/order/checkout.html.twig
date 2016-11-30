@@ -3,6 +3,14 @@
 {% block javascripts %}
     {{ parent() }}
     {{ include('order/_creditCardFormJavaScript.html.twig') }}
+    <script>
+        jQuery(document).ready(function() {
+            $('.js-show-code-form').on('click', function(e) {
+                e.preventDefault();
+                $('.js-code-form').show();
+            })
+        });
+    </script>
 {% endblock %}
 {% block body %}
 <div class="nav-space-checkout">
@@ -33,17 +41,49 @@
                                 <td class="col-xs-3">${{ cart.subscriptionPlan.price }} / month</td>
                             </tr>
                         {% endif %}
+                        {% if cart.couponCode %}
+                            <tr>
+                                <th class="col-xs-6 checkout-product-name">Coupon {{ cart.couponCode }}</th>
+                                <td class="col-xs-3">- ${{ cart.couponCodeValue }}</td>
+                            </tr>
+                        {% endif %}
                     </tbody>
                     <tfoot>
                         <tr>
                             <th class="col-xs-6 info">Total</th>
-                            <td class="col-xs-3 info checkout-total">${{ cart.total }}</td>
+                            <td class="col-xs-3 info checkout-total">${{ cart.totalWithDiscount }}</td>
                         </tr>
                     </tfoot>
                 </table>
+
+                <button class="btn btn-xs btn-link pull-right js-show-code-form">
+                    I have a coupon code
+                </button>
+
+                  <div class="js-code-form" style="display: none;">
+                    <form action="{{ path('order_add_coupon') }}" method="POST" class="form-inline">
+                        <div class="form-group">
+                            <div class="input-group">
+                                <span class="input-group-addon">
+                                    <i class="fa fa-terminal"></i>
+                                </span>
+                                <input type="text" name="code" autocomplete="off" class="form-control" placeholder="Coupon Code"/>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Add</button>
+                        </div>
+                    </form>
+                </div>
             </div>
             <div class="col-xs-12 col-sm-6">
-                {{ include('order/_cardForm.html.twig') }}
+                {% if cart.totalWithDiscount > 0 %}
+                    {{ include('order/_cardForm.html.twig') }}
+                {% else %}
+                    <form action="" method="POST">
+                        <button type="submit" class="btn btn-lg btn-danger">
+                            Checkout for Free!
+                        </button>
+                    </form>
+                {% endif %}
             </div>
         </div>
     </div>

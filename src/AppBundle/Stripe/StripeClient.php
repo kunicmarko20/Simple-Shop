@@ -15,10 +15,13 @@ class StripeClient
     }
     public function createCustomer(User $user, $paymentToken)
     {
-        $customer = \Stripe\Customer::create([
+        $data = [
             'email' => $user->getEmail(),
-            'source' => $paymentToken,
-        ]);
+        ];
+        if ($paymentToken) {
+            $data['source'] = $paymentToken;
+        }
+        $customer = \Stripe\Customer::create($data);
         $user->setStripeCustomerId($customer->id);
         $this->em->persist($user);
         $this->em->flush($user);
@@ -146,5 +149,40 @@ class StripeClient
             }
         }
         return $stripeSubscription;
+    }
+    /**
+     * @param $code
+     * @return \Stripe\Coupon
+     */
+    public function findCoupon($code)
+    {
+        return \Stripe\Coupon::retrieve($code);
+    }
+    
+    public function findCustomer(User $user)
+    {
+        return \Stripe\Customer::retrieve($user->getStripeCustomerId());
+    }
+    
+    public function findPaidInvoices(User $user)
+    {
+        $allInvoices = \Stripe\Invoice::all([
+            'customer' => $user->getStripeCustomerId()
+        ]);
+        $iterator = $allInvoices->autoPagingIterator();
+        
+        $invoices = [];
+        foreach ($iterator as $invoice) {
+            if ($invoice->paid) {
+                $invoices[] = $invoice;
+            }
+        }
+        
+        return $invoices;
+    }
+    
+    public function findInvoice($invoiceId)
+    {
+        return \Stripe\Invoice::retrieve($invoiceId);
     }
 }

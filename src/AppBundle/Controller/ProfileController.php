@@ -18,6 +18,7 @@ class ProfileController extends Controller
         $currentPlan = null;
         $otherPlan = null;
         $otherDurationPlan = null;
+        
         if ($this->getUser()->hasActiveSubscription()) {
             $currentPlan = $this->get('subscription_helper')
                 ->findPlan($this->getUser()->getSubscription()->getStripePlanId());
@@ -26,13 +27,30 @@ class ProfileController extends Controller
             $otherDurationPlan = $this->get('subscription_helper')
                 ->findPlanForOtherDuration($currentPlan->getPlanId());
         }
+        $invoices = $this->get('stripe.client')
+            ->findPaidInvoices($this->getUser());
+        
         return $this->render('profile/account.html.twig', [
             'error' => null,
             'currentPlan' => $currentPlan,
             'otherPlan' => $otherPlan,
+            'invoices' => $invoices,
             'otherDurationPlan' => $otherDurationPlan,
         ]);
     }
+    
+    /**
+     * @Route("/profile/invoices/{invoiceId}", name="account_invoice_show")
+     */
+    public function showInvoiceAction($invoiceId)
+    {
+        $stripeInvoice = $this->get('stripe.client')
+            ->findInvoice($invoiceId);
+        return $this->render('profile/invoice.html.twig', array(
+            'invoice' => $stripeInvoice
+        ));
+    }
+    
     /**
      * @Route("/profile/subscription/cancel", name="account_subscription_cancel")
      * @Method("POST")
