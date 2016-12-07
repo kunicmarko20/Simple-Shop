@@ -1,23 +1,18 @@
 language: php
+sudo: true
+sudo: required
 php:
-#  - '5.6'
+  - '5.6'
   - '7.0'
-
-before_install:
-  - wget https://assets.membergetmember.co/software/phantomjs-2.1.1-linux-x86_64.tar.bz2
-  - tar -xjf phantomjs-2.1.1-linux-x86_64.tar.bz2
-  - sudo rm -rf /usr/local/phantomjs/bin/phantomjs
-  - sudo mv phantomjs-2.1.1-linux-x86_64/bin/phantomjs /usr/local/phantomjs/bin/phantomjs
 
 before_script:
     - sudo apt-get update
     - composer install --dev --prefer-dist
     - chmod -R 777 var/cache var/logs
     - sudo apt-get install xvfb
-    - echo '' > ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini
-    - "sh -e /etc/init.d/xvfb start"
-    - "export DISPLAY=:99.0"
-    - "phantomjs --webdriver=8643 > /dev/null &"
+    - sudo apt-get install firefox
+    - "wget http://selenium-release.storage.googleapis.com/2.45/selenium-server-standalone-2.45.0.jar"
+    - "DISPLAY=:10 xvfb-run java -jar selenium-server-standalone-2.45.0.jar > /dev/null &"
     - sleep 5
 
 script:
