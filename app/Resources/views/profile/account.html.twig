@@ -86,13 +86,13 @@
                                     {% else %}
                                         {{ currentPlan.name }}
                                         <span class="label label-success">Active</span>
-                                        <button class="btn btn-xs btn-link pull-right js-change-plan-button"
-                                            data-preview-url="{{ path('account_preview_plan_change', {'planId': otherPlan.planId}) }}"
-                                            data-plan-name="{{ otherPlan.name }}"
-                                            data-change-url="{{ path('account_execute_plan_change', {'planId': otherPlan.planId}) }}"
-                                        >
-                                            Change to {{ otherPlan.name }}
-                                        </button>
+                                            <button class="btn btn-xs btn-link pull-right js-change-plan-button"
+                                                data-preview-url="{{ path('account_preview_plan_change', {'planId': otherPlan.planId}) }}"
+                                                data-plan-name="{{ otherPlan.name }}"
+                                                data-change-url="{{ path('account_execute_plan_change', {'planId': otherPlan.planId}) }}"
+                                            >
+                                                Change to {{ otherPlan.name }}
+                                            </button>
                                     {% endif %}
                                 {% else %}
                                     <span class="label label-default">None</span>

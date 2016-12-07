@@ -17,7 +17,7 @@ Feature: Subscription
         And I fill card field "card-cvc" with "123"
         And I fill card field "card-number" with "4242424242424242"
         Then I press "Checkout"
-        And I wait "5000" ms for javascript to process
+        And I wait "8000" ms for javascript to process
         Then I should see "Order Complete"
         And I follow "Account"
         Then I should see "Active"
@@ -38,6 +38,28 @@ Feature: Subscription
         And I should see "Active"
         And I should see "Visa ending in 4242"
 
+    @javascript
+    Scenario: Switch subscription pack
+        Given I follow "Account"
+        And I press "Change to Mega Pack"
+        And I wait "5000" ms for javascript to process
+        And I press "OK"
+        And I wait "5000" ms for javascript to process
+        Then I should see "Plan changed!"
+        And I press "OK"
+        And I wait "5000" ms for javascript to process
+        And I should see "Change to Mini Pack"
 
+    @javascript
+    Scenario: Switch to yearly pack
+        Given I follow "Account"
+        And I press "Bill yearly"
+        And I wait "5000" ms for javascript to process
+        And I press "OK"
+        And I wait "5000" ms for javascript to process
+        Then I should see "Plan changed!"
+        And I press "OK"
+        And I wait "5000" ms for javascript to process
+        And I should see "Bill monthly"
 
 

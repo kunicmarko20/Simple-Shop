@@ -23,6 +23,21 @@ Feature: Order
         Then I should see "Order Complete"
 
     @javascript
+    Scenario: Coupons
+        Given I fill card field "card-number" with "4242424242424242"
+        And I press "I have a coupon code"
+        Then I press "Add"
+        And I should see "Missing coupon code!"
+        Then I press "I have a coupon code"
+        And I fill in "code" with "MEGAOFF"
+        Then I press "Add"
+        And I should see "- $500"
+        And I should see "Checkout for Free!"
+        Then I press "Checkout for Free!"
+        And I wait "10000" ms for javascript to process
+        Then I should see "Order Complete"
+
+    @javascript
     Scenario: Card declined
         Given I fill card field "card-number" with "4000000000000002"
         Then I press "Checkout"

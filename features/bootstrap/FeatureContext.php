@@ -131,7 +131,6 @@ class FeatureContext extends MinkContext implements Context
     {
         $this->thereAreProducts($number);
     }
-
     /**
      * @Given I press :linkText in the :rowText row
      */
